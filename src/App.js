@@ -3,15 +3,11 @@ import { Col } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import Searcher from '../src/components/Searcher';
 import PokemonList from '../src/components/PokemonList';
-import { getPokemon } from './api';
+import { getPokemon, getPokemonDetails } from './api';
 import { setPokemons } from './actions'
 import logo from './statics/logo.svg'
 import './App.css';
-
-
 import 'antd/dist/reset.css';
-
-
 
 
 function App() {
@@ -22,9 +18,11 @@ function App() {
   useEffect(() => {
     const fetchPokemons = async () => {
       const pokemonsRes = await getPokemon();
-      dispatch(setPokemons(pokemonsRes));
+      const pokemonsDetailed= await Promise.all(
+        pokemonsRes.map((pokemon) => getPokemonDetails(pokemon))
+        );
+      dispatch(setPokemons(pokemonsDetailed));
     };
-
     fetchPokemons();
   }, []);
 
@@ -40,7 +38,5 @@ function App() {
     </div>
   );
 }
-
-
 
 export default App;
